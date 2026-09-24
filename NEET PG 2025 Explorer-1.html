@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NEET PG 2025 Allotment Explorer</title>
+<style>
+:root{--bg:#eeeeee;--card:#f8f8f8;--ink:#111111;--muted:#666666;--line:#d4d4d4;--line-dark:#b9b9b9;--soft:#e8e8e8;--soft2:#f2f2f2;--shadow:none}
+*{box-sizing:border-box;min-width:0}
+html{background:var(--bg);max-width:100%;overflow-x:hidden}
+body{margin:0;max-width:100%;overflow-x:hidden;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);letter-spacing:-.01em}
+header{background:#111;color:#fff;padding:22px 0 46px;border-bottom:1px solid #000}
+.wrap{width:100%;max-width:1040px;margin:0 auto;padding-left:18px;padding-right:18px}
+.top{display:flex;justify-content:space-between;gap:16px;align-items:center}
+.brand{font-weight:750;font-size:20px;letter-spacing:-.025em}
+.pill{font-size:12px;color:#d8d8d8;border:1px solid #555;padding:6px 10px;border-radius:999px;background:transparent}
+.hero{margin-top:30px;max-width:720px}
+.hero h1{font-size:40px;line-height:1.04;letter-spacing:-.045em;margin:0 0 10px;font-weight:760}
+.hero p{font-size:15px;line-height:1.55;color:#bfbfbf;margin:0;max-width:640px}
+.shell{margin-top:-24px}
+.panel,.card{width:100%;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:none}
+.panel{padding:12px}
+.searchgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr) minmax(0,.8fr) minmax(0,.8fr) minmax(0,.9fr) minmax(0,1.15fr) auto;gap:8px;align-items:center;width:100%;max-width:100%}
+.input,select,button{height:40px;max-width:100%;border:1px solid var(--line-dark);border-radius:8px;padding:0 11px;background:#fff;color:var(--ink);font:inherit}.input,select{width:100%}
+.input::placeholder{color:#8a8a8a}
+.input:focus,select:focus{outline:2px solid #111;outline-offset:1px;border-color:#111}
+.btn{background:#111;color:#fff;border:1px solid #111;font-weight:650;cursor:pointer;padding:0 17px}
+.btn:hover{background:#292929}
+.btn.secondary{background:transparent;color:#111;border:1px solid var(--line-dark)}
+.btn.secondary:hover{background:#e7e7e7}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin:13px 0 12px}
+.tab{border:1px solid transparent;background:transparent;padding:7px 10px;border-radius:7px;cursor:pointer;font-weight:650;color:#5f5f5f;height:auto}
+.tab:hover{color:#111;background:#e4e4e4}
+.tab.active{background:#111;color:#fff;border-color:#111}
+.status{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border-radius:8px;background:#e9e9e9;border:1px solid #d1d1d1;margin-top:10px;font-size:12.5px;line-height:1.5;color:#4a4a4a}
+.status strong{color:#111}
+.dot{width:8px;height:8px;border-radius:50%;background:#111;margin-top:5px;flex:none}
+.section{display:none;max-width:100%}.section.active{display:block}
+.sectionhead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:16px 0 8px}
+.sectionhead h2{margin:0;font-size:18px;letter-spacing:-.025em}
+.sectionhead p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+.tablewrap{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--line);background:#f8f8f8}
+.table{width:100%;border-collapse:collapse;min-width:980px}
+.table th,.table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:top}
+.table th{position:sticky;top:0;cursor:pointer;user-select:none;background:#e5e5e5;color:#4f4f4f;font-size:10.5px;text-transform:uppercase;letter-spacing:.055em;font-weight:750}
+.table tbody tr:hover{background:#f0f0f0}.table tbody tr.selected{background:#e2e2e2}
+.badge{display:inline-flex;padding:4px 7px;border-radius:6px;background:#e2e2e2;color:#222;font-size:10.5px;font-weight:700;border:1px solid #cecece}
+.badge.green{background:#111;color:#fff;border-color:#111}
+.badge.gray{background:#ededed;color:#4d4d4d}
+.muted{color:var(--muted)}
+.star{border:none;background:transparent;font-size:18px;height:auto;padding:0;cursor:pointer;color:#111}
+.card{padding:16px}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+.foot{padding:24px 0 40px;color:#777;font-size:11.5px;line-height:1.6}
+.sourcebox{margin-top:12px;background:#ededed;border:1px solid var(--line);border-radius:8px;padding:11px;font-size:11.5px;line-height:1.6}
+.count{font-weight:800;color:var(--ink)}
+.pager{display:flex;justify-content:center;align-items:center;gap:7px;padding:12px 0;font-size:11.5px;color:var(--muted);flex-wrap:wrap;max-width:100%}
+.pager .btn{height:34px;width:auto;min-width:34px;padding:0 10px;font-size:11.5px}.pager .btn:disabled{opacity:.35;cursor:not-allowed}.pagecount{display:inline-flex;align-items:center;justify-content:center;min-width:72px;height:34px;padding:0 9px;border:1px solid var(--line);border-radius:7px;background:#ededed;color:#444;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ranklink{border:0;background:transparent;padding:0;height:auto;width:auto;font:inherit;font-weight:800;color:#111;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.ranklink:focus{outline:2px solid #111;outline-offset:3px;border-radius:2px}
+.history{display:none;margin-top:12px}.history.open{display:block}.historyhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}.historyhead h3{margin:0;font-size:16px}.historyhead p{margin:3px 0 0;color:var(--muted);font-size:12px}.historyclose{display:inline-flex;align-items:center;justify-content:center;flex:0 0 32px;width:32px!important;height:32px!important;min-width:32px;padding:0!important;border:1px solid var(--line);border-radius:50%;background:#ededed;color:#222;font-size:20px;line-height:1;cursor:pointer}.timeline{display:grid;gap:8px}.historyrow{display:grid;grid-template-columns:92px minmax(0,1.15fr) minmax(0,1fr) 110px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.historyrow:first-child{border-top:0}.historyround{font-weight:750;font-size:12px}.historymain{font-size:12.5px;line-height:1.35}.historysub{font-size:11.5px;color:var(--muted);margin-top:2px}.move{font-size:11px;font-weight:750;white-space:nowrap}.move.up{color:#111}.move.same{color:#666}.move.new{color:#111}.move.none{color:#888}
+
+.controlsline{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+.clearbtn{height:34px;padding:0 10px;font-size:12px}
+.sortmark{font-size:10px;color:#888;margin-left:4px}
+@media(max-width:900px){.wrap{padding-left:14px;padding-right:14px}.searchgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.searchgrid .btn{grid-column:auto}.hero h1{font-size:34px}.top{align-items:flex-start;flex-direction:column}}
+@media(max-width:680px){.searchgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.searchgrid .btn{grid-column:1/-1;width:100%}.controlsline{justify-content:stretch;width:100%}.controlsline .btn{flex:1;min-width:0}.table{min-width:860px}}
+@media(max-width:560px){.historyclose,.pager .btn{width:auto!important}.pager{gap:6px}.pagecount{min-width:68px}.historyrow{grid-template-columns:74px minmax(0,1fr);gap:6px 10px}.historyrow .historyquota,.historyrow .move{grid-column:2}.historyhead{align-items:center}header{padding:18px 0 40px}.searchgrid{grid-template-columns:minmax(0,1fr)}.hero{margin-top:24px}.hero h1{font-size:30px}.hero p{font-size:14px}.panel{padding:9px}.shell{margin-top:-18px}.card{padding:12px}.tabs{gap:3px}.tab{padding:7px 8px;font-size:12px}.input,select,button{height:42px;width:100%}.table th,.table td{padding:8px 9px}.pill{max-width:100%;white-space:normal}.sectionhead{align-items:flex-start;flex-direction:column}}
+</style>
+
+<style>
+header .top,
+.top {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+header .brand,
+.top .brand,
+header h1,
+.top h1 {
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+}
+</style>
+
+
+<style>
+:root{
+  --bg:#ffffff !important;
+  --panel:#ffffff !important;
+  --card:#ffffff !important;
+  --text:#0f172a !important;
+  --muted:#64748b !important;
+  --line:#dbe4ee !important;
+  --accent:#0b2a55 !important;
+  --accent2:#123d73 !important;
+  --soft:#f4f7fb !important;
+}
+html,body{background:#ffffff !important;color:#0f172a !important}
+body{background:#ffffff !important}
+header,.header,.topbar{background:#ffffff !important}
+h1,h2,h3,.brand,.title{color:#0b2a55 !important}
+.card,.panel,.searchbox,.filters,.history,.tablewrap,.table-wrap{
+  background:#ffffff !important;
+  border-color:#dbe4ee !important;
+}
+input,select,textarea{
+  background:#ffffff !important;
+  color:#0f172a !important;
+  border-color:#cbd7e6 !important;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#0b2a55 !important;
+  outline-color:#0b2a55 !important;
+}
+button,.btn{border-color:#cbd7e6 !important}
+.btn:not(.secondary),button.primary,.primary{
+  background:#0b2a55 !important;
+  color:#ffffff !important;
+  border-color:#0b2a55 !important;
+}
+.btn.secondary,.secondary,.historyclose{
+  background:#f4f7fb !important;
+  color:#0b2a55 !important;
+  border-color:#dbe4ee !important;
+}
+a,.air-link,.ranklink,.rank-link{color:#0b2a55 !important}
+thead th{
+  background:#f4f7fb !important;
+  color:#0b2a55 !important;
+  border-color:#dbe4ee !important;
+}
+tbody td{border-color:#e6edf5 !important}
+tbody tr:hover{background:#f7f9fc !important}
+tbody tr.selected,.selected-row{background:#eef4fb !important}
+.pagecount{
+  background:#f4f7fb !important;
+  color:#0b2a55 !important;
+  border-color:#dbe4ee !important;
+}
+.badge,.pill,.tag{
+  background:#eef4fb !important;
+  color:#0b2a55 !important;
+  border-color:#dbe4ee !important;
+}
+footer,.foot,.helper,.hint,.muted{color:#64748b !important}
+hr{border-color:#e6edf5 !important}
+</style>
+
+
+<style>
+:root{
+  --bg:#f7f5f0 !important;
+  --panel:#fbfaf7 !important;
+  --card:#fbfaf7 !important;
+  --text:#262626 !important;
+  --muted:#6f6b64 !important;
+  --line:#ddd9d1 !important;
+  --accent:#303030 !important;
+  --accent2:#444444 !important;
+  --soft:#efede7 !important;
+}
+html,body{background:#f7f5f0 !important;color:#262626 !important}
+body{background:#f7f5f0 !important}
+header,.header,.topbar{background:#f7f5f0 !important}
+h1,h2,h3,.brand,.title{color:#262626 !important}
+.card,.panel,.searchbox,.filters,.history,.tablewrap,.table-wrap{
+  background:#fbfaf7 !important;
+  border-color:#ddd9d1 !important;
+}
+input,select,textarea{
+  background:#fbfaf7 !important;
+  color:#262626 !important;
+  border-color:#d2cec5 !important;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#444444 !important;
+  outline-color:#444444 !important;
+}
+button,.btn{border-color:#d2cec5 !important}
+.btn:not(.secondary),button.primary,.primary{
+  background:#303030 !important;
+  color:#fbfaf7 !important;
+  border-color:#303030 !important;
+}
+.btn.secondary,.secondary,.historyclose{
+  background:#efede7 !important;
+  color:#303030 !important;
+  border-color:#d8d4cb !important;
+}
+a,.air-link,.ranklink,.rank-link{color:#303030 !important}
+thead th{
+  background:#efede7 !important;
+  color:#303030 !important;
+  border-color:#ddd9d1 !important;
+}
+tbody td{border-color:#e5e1da !important}
+tbody tr:hover{background:#f2f0ea !important}
+tbody tr.selected,.selected-row{background:#eae7df !important}
+.pagecount{
+  background:#efede7 !important;
+  color:#303030 !important;
+  border-color:#d8d4cb !important;
+}
+.badge,.pill,.tag{
+  background:#ebe8e1 !important;
+  color:#303030 !important;
+  border-color:#d8d4cb !important;
+}
+footer,.foot,.helper,.hint,.muted{color:#6f6b64 !important}
+hr{border-color:#e5e1da !important}
+</style>
+
+
+<style>
+footer,.foot{
+  width:100% !important;
+  text-align:center !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  justify-content:center !important;
+}
+</style>
+
+
+<style>
+.creator{
+  display:inline-block;
+  margin-top:7px;
+  color:#303030;
+  font-weight:600;
+}
+</style>
+
+
+<style>
+.data-provenance{
+  max-width:900px;
+  margin:18px auto 6px;
+  padding:0 16px;
+  text-align:center;
+  font-size:11px;
+  line-height:1.55;
+  color:#6f6b64;
+}
+.data-provenance strong{
+  color:#303030;
+  font-weight:600;
+}
+.foot, footer{
+  max-width:900px;
+  padding-left:16px !important;
+  padding-right:16px !important;
+  line-height:1.55;
+}
+.creator{
+  margin-top:8px !important;
+}
+</style>
+
+</head>
+
+<!--
+Data/source note:
+- Allotment data: published MCC NEET-PG 2025 counselling results.
+- Marks/rank data: published NBEMS NEET-PG 2025 result data.
+- This site is an independent interface and does not claim ownership of underlying official records.
+Before public deployment, verify that any third-party-hosted dataset or script used by this build has an appropriate license/permission and matches official source data.
+-->
+
+<body>
+<header><div class="wrap"><div class="top"><div class="brand">NEET PG 2025 Allotment Explorer</div></div></div></header>
+<main class="wrap shell">
+<div class="panel">
+  <div class="searchgrid">
+    <input id="rankSearch" class="input" type="number" placeholder="Search by Rank" />
+    <input id="marksSearch" class="input" type="number" min="-200" max="800" placeholder="Search by Marks" />
+    <select id="branchFilter"><option value="">All branches</option></select>
+    <select id="categoryFilter"><option value="">All categories</option><option>General</option><option>OBC</option><option>EWS</option><option>SC</option><option>ST</option></select>
+    <select id="roundFilter"><option value="">All rounds</option><option>Round 1</option><option>Round 2</option><option>Round 3</option><option>Stray</option></select>
+    <select id="stateFilter"><option value="">All states</option></select>
+    <button class="btn" onclick="applyFilters()">Search</button>
+  </div>
+  <div class="controlsline"><button class="btn secondary clearbtn" type="button" id="clearFilters">Clear filters</button></div>
+  <div class="status"><span class="dot"></span><div><strong>Loading 2025 data…</strong></div></div>
+</div>
+
+
+
+<section id="explorer" class="section active">
+ <div class="sectionhead"><div><h2>Allotments</h2><p class="muted" style="margin-top:5px">Click any AIR to view its upgrade history.</p></div></div>
+ <div class="tablewrap"><table class="table"><thead><tr><th data-sort="rank">AIR</th><th data-sort="marks">Marks</th><th data-sort="course">Course</th><th data-sort="institute">Institute</th><th data-sort="quota">Quota</th><th data-sort="allottedCategory">Seat category</th><th data-sort="candidateCategory">Candidate category</th><th data-sort="round">Round</th></tr></thead><tbody id="resultsBody"></tbody></table></div>
+ <div id="historyPanel" class="card history" aria-live="polite"></div>
+</section>
+
+
+
+
+<div class="foot"><strong>Disclaimer:</strong> This is an independent informational tool and is not affiliated with or endorsed by MCC, NBEMS, MoHFW, or the Government of India. Data is compiled from publicly available NEET-PG 2025 results and counselling information. While efforts are made to maintain accuracy, errors or omissions may occur. Always verify information with official sources before making counselling or admission decisions.<br><span class="creator">Created by abhsk.m</span></div>
+</main>
+<script src="https://crockzo.github.io/neet-pg/round-1/data.js"></script>
+<script src="https://crockzo.github.io/neet-pg/round-2/data.js"></script>
+<script src="https://crockzo.github.io/neet-pg/round-3/data.js"></script>
+<script>
+const strayPreview = [
+ {rank:2952,score:null,course:'M.D. Dermatology',institute:'Madras Medical College, Chennai',quota:'All India',allottedCategory:'Open',candidateCategory:'General',remarks:'',state:'Tamil Nadu'},
+ {rank:3246,score:null,course:'M.D. Radio-Diagnosis',institute:'Kidwai Memorial Institute of Oncology, Karnataka',quota:'All India',allottedCategory:'Open',candidateCategory:'EWS',remarks:'',state:'Karnataka'},
+ {rank:3478,score:null,course:'M.D. General Medicine',institute:'Sri Venkateswara Institute of Medical Sciences, Tirupati',quota:'All India',allottedCategory:'Open',candidateCategory:'OBC',remarks:'',state:'Andhra Pradesh'},
+ {rank:4048,score:null,course:'M.D. General Medicine',institute:'S.V. Medical College, Tirupati',quota:'All India',allottedCategory:'Open',candidateCategory:'General',remarks:'',state:'Andhra Pradesh'},
+ {rank:4867,score:null,course:'M.D. Radio-Diagnosis',institute:'Government Medical College, Baroda',quota:'All India',allottedCategory:'Open',candidateCategory:'OBC',remarks:'',state:'Gujarat'},
+ {rank:4870,score:null,course:'M.D. Radio-Diagnosis',institute:'Government Medical College, Surat',quota:'All India',allottedCategory:'Open',candidateCategory:'General',remarks:'',state:'Gujarat'},
+ {rank:4882,score:null,course:'M.D. General Medicine',institute:'Pandit Dindayal Upadhyay Medical College, Rajkot',quota:'All India',allottedCategory:'OBC',candidateCategory:'OBC',remarks:'',state:'Gujarat'},
+ {rank:5176,score:null,course:'M.D. Dermatology',institute:'Karnataka Medical College and Research Institute, Hubballi',quota:'All India',allottedCategory:'Open',candidateCategory:'OBC',remarks:'',state:'Karnataka'},
+ {rank:5220,score:null,course:'M.D. Dermatology',institute:'Gandhi Medical College, Telangana',quota:'All India',allottedCategory:'OBC',candidateCategory:'OBC',remarks:'',state:'Telangana'},
+ {rank:5398,score:null,course:'M.D. Radio-Diagnosis',institute:'Government Medical College, Surat',quota:'All India',allottedCategory:'Open',candidateCategory:'General',remarks:'',state:'Gujarat'},
+ {rank:5527,score:null,course:'M.S. General Surgery',institute:'ESIC Medical College and PGIMSR, Chennai',quota:'All India',allottedCategory:'Open',candidateCategory:'General',remarks:'',state:'Tamil Nadu'},
+ {rank:5669,score:null,course:'M.D. Radio-Diagnosis',institute:'Kakatiya Medical College, Telangana',quota:'All India',allottedCategory:'OBC',candidateCategory:'OBC',remarks:'',state:'Telangana'},
+ {rank:5681,score:null,course:'(NBEMS) General Medicine',institute:'Bangalore Baptist Hospital, Bengaluru',quota:'DNB Quota',allottedCategory:'Open',candidateCategory:'General',remarks:'',state:'Karnataka'},
+ {rank:5718,score:null,course:'M.D. General Medicine',institute:'S.V. Medical College, Tirupati',quota:'All India',allottedCategory:'Open',candidateCategory:'General',remarks:'',state:'Andhra Pradesh'},
+ {rank:5928,score:null,course:'M.D. Dermatology',institute:'Siddhartha Medical College, Vijayawada',quota:'All India',allottedCategory:'Open',candidateCategory:'OBC',remarks:'',state:'Andhra Pradesh'},
+ {rank:5965,score:null,course:'(NBEMS) Radio-Diagnosis',institute:'Apollo Hospital, Hyderabad',quota:'DNB Quota',allottedCategory:'Open',candidateCategory:'EWS',remarks:'',state:'Telangana'}
+];
+
+const $=id=>document.getElementById(id);
+const PAGE_SIZE=100;
+let page=1;
+let allData=[];
+let filtered=[];
+let sourceReady=false;
+let sortKey=null;
+let sortDir=1;
+
+function normalizeCategory(v){
+  const s=String(v||'').trim();
+  const u=s.toUpperCase();
+  if(!s) return '';
+  if(u.includes('OBC')) return 'OBC';
+  if(u.includes('EWS')) return 'EWS';
+  if(u==='SC'||u.includes('SCHEDULE CASTE')) return 'SC';
+  if(u==='ST'||u.includes('SCHEDULE TRIBE')) return 'ST';
+  if(u==='GENERAL'||u==='GEN'||u==='GN'||u==='OPEN'||u.includes('OPEN SEAT')) return 'General';
+  return s;
+}
+function wrapRows(rows,round){return (rows||[]).map(x=>({
+  rank:Number(x.rank),marks:(x.score===null||x.score===undefined||x.score==='')?null:Number(x.score),
+  course:String(x.course||''),institute:String(x.institute||''),quota:String(x.quota||''),
+  allottedCategory:normalizeCategory(x.allottedCategory),candidateCategory:normalizeCategory(x.candidateCategory),
+  round,remarks:String(x.remarks||''),state:String(x.state||'')
+})).filter(x=>Number.isFinite(x.rank));}
+function uniq(a){return [...new Set(a.filter(Boolean))].sort((x,y)=>x.localeCompare(y,undefined,{sensitivity:'base'}));}
+function setStatus(text,strong='Data loaded.'){
+  document.querySelector('.status').innerHTML=`<span class="dot"></span><div><strong>${strong}</strong> ${text}</div>`;
+}
+function boot(){
+  try{
+    const r1=typeof ROUND_1_DATA!=='undefined'?ROUND_1_DATA:[];
+    const r2=typeof ROUND_2_DATA!=='undefined'?ROUND_2_DATA:[];
+    const r3=typeof ROUND_3_DATA!=='undefined'?ROUND_3_DATA:[];
+    allData=[...wrapRows(r1,'Round 1'),...wrapRows(r2,'Round 2'),...wrapRows(r3,'Round 3'),...wrapRows(strayPreview,'Stray')];
+    sourceReady=r1.length>20000 && r2.length>15000 && r3.length>15000;
+    const b=$('branchFilter');
+    uniq(allData.map(x=>x.course)).forEach(c=>b.insertAdjacentHTML('beforeend',`<option value="${escapeAttr(c)}">${escapeHtml(c)}</option>`));
+    const st=$('stateFilter');
+    uniq(allData.map(x=>x.state)).forEach(v=>st.insertAdjacentHTML('beforeend',`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`));
+    filtered=[...allData];
+    if(sourceReady) document.querySelector('.status').remove();
+    else setStatus('The full external dataset could not be loaded. Check your internet connection and reopen this file.','Data connection unavailable.');
+    applyFilters();
+  }catch(e){console.error(e);setStatus('The full dataset could not be initialized. Check your internet connection and reopen this file.','Data connection unavailable.');render();}
+}
+function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function escapeAttr(s){return escapeHtml(s);}
+
+function applyFilters(){
+  const r=$('rankSearch').value!==''?Number($('rankSearch').value):null;
+  const m=$('marksSearch').value!==''?Number($('marksSearch').value):null;
+  const b=$('branchFilter').value,c=$('categoryFilter').value,rd=$('roundFilter').value;
+  const st=$('stateFilter').value;
+  filtered=allData.filter(x=>(!b||x.course===b)&&(!c||x.candidateCategory===c||x.allottedCategory===c)&&(!rd||x.round===rd)&&(!st||x.state===st));
+  if(sortKey){
+    filtered.sort((a,z)=>compareValues(a[sortKey],z[sortKey])*sortDir);
+  } else {
+    filtered.sort((a,z)=>{
+      if(r!==null&&Number.isFinite(r)) return Math.abs(a.rank-r)-Math.abs(z.rank-r)||a.rank-z.rank;
+      if(m!==null&&Number.isFinite(m)){
+        const ad=a.marks==null?Infinity:Math.abs(a.marks-m),zd=z.marks==null?Infinity:Math.abs(z.marks-m);
+        return ad-zd||a.rank-z.rank;
+      }
+      return a.rank-z.rank;
+    });
+  }
+  page=1;render();updateSortMarks();
+}
+function compareValues(a,b){
+  if(a==null&&b==null)return 0;if(a==null)return 1;if(b==null)return -1;
+  if(typeof a==='number'&&typeof b==='number')return a-b;
+  return String(a).localeCompare(String(b),undefined,{numeric:true,sensitivity:'base'});
+}
+function updateSortMarks(){
+  document.querySelectorAll('#explorer th[data-sort]').forEach(th=>{
+    const old=th.querySelector('.sortmark'); if(old) old.remove();
+    if(th.dataset.sort===sortKey){const s=document.createElement('span');s.className='sortmark';s.textContent=sortDir===1?'▲':'▼';th.appendChild(s);}
+  });
+}
+function render(){
+  const body=$('resultsBody');
+  if(!filtered.length){body.innerHTML='<tr><td colspan="8" class="empty">No matching allotments.</td></tr>';renderPager();return;}
+  const start=(page-1)*PAGE_SIZE;
+  body.innerHTML=filtered.slice(start,start+PAGE_SIZE).map(x=>`<tr tabindex="0" data-rank="${x.rank}"><td><button type="button" class="ranklink" data-history-rank="${x.rank}" aria-label="View allotment history for AIR ${x.rank}">${x.rank.toLocaleString('en-IN')}</button></td><td>${x.marks??'<span class="muted">—</span>'}</td><td>${escapeHtml(x.course)}</td><td>${escapeHtml(x.institute)}</td><td><span class="badge gray">${escapeHtml(x.quota)}</span></td><td>${escapeHtml(x.allottedCategory||'—')}</td><td>${escapeHtml(x.candidateCategory||'—')}</td><td><span class="badge">${escapeHtml(x.round)}</span></td></tr>`).join('');
+  body.querySelectorAll('tr').forEach(tr=>tr.addEventListener('click',e=>{body.querySelectorAll('tr').forEach(r=>r.classList.remove('selected'));tr.classList.add('selected');if(!e.target.closest('.ranklink')) return;}));
+  body.querySelectorAll('.ranklink').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();showHistory(Number(btn.dataset.historyRank));const tr=btn.closest('tr');body.querySelectorAll('tr').forEach(r=>r.classList.remove('selected'));tr.classList.add('selected');}));
+  renderPager();
+}
+
+function showHistory(rank){
+  const panel=$('historyPanel');
+  const order={'Round 1':1,'Round 2':2,'Round 3':3,'Stray':4};
+  const rows=allData.filter(x=>x.rank===rank).sort((a,b)=>(order[a.round]||99)-(order[b.round]||99));
+  if(!rows.length){panel.className='card history open';panel.innerHTML='<div class="empty">No history found for this AIR.</div>';return;}
+  const byRound=new Map(rows.map(x=>[x.round,x]));
+  const rounds=['Round 1','Round 2','Round 3','Stray'];
+  let previous=null;
+  const items=rounds.map(rd=>{
+    const x=byRound.get(rd);
+    if(!x) return `<div class="historyrow"><div class="historyround">${rd}</div><div class="historymain muted">No allotment found</div><div class="historyquota"></div><div class="move none">—</div></div>`;
+    let label='First allotment', cls='new';
+    if(previous){
+      const same=x.course===previous.course && x.institute===previous.institute && x.quota===previous.quota;
+      label=same?'Same allotment':'Upgraded'; cls=same?'same':'up';
+    }
+    previous=x;
+    return `<div class="historyrow"><div class="historyround">${rd}</div><div class="historymain"><strong>${escapeHtml(x.course)}</strong><div class="historysub">${escapeHtml(x.institute)}</div></div><div class="historyquota"><span class="badge gray">${escapeHtml(x.quota||'—')}</span></div><div class="move ${cls}">${label}</div></div>`;
+  }).join('');
+  const marks=rows.find(x=>x.marks!=null)?.marks;
+  panel.className='card history open';
+  panel.innerHTML=`<div class="historyhead"><div><h3>AIR ${rank.toLocaleString('en-IN')} · Allotment history</h3><p>${marks!=null?marks+' marks · ':''}Round-by-round MCC 2025 allotments found in this dataset.</p></div><button type="button" class="historyclose" id="closeHistory" aria-label="Close allotment history" title="Close">×</button></div><div class="timeline">${items}</div>`;
+  $('closeHistory').addEventListener('click',()=>{panel.className='card history';panel.innerHTML='';});
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function renderPager(){
+  let p=$('pager'); if(!p){p=document.createElement('div');p.id='pager';p.className='pager';document.querySelector('#explorer .tablewrap').insertAdjacentElement('afterend',p);}
+  const pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
+  p.innerHTML=pages<=1?'':`<button class="btn secondary" ${page<=1?'disabled':''} onclick="changePage(-1)" aria-label="Previous page">‹</button><span class="pagecount">${page.toLocaleString('en-IN')} / ${pages.toLocaleString('en-IN')}</span><button class="btn secondary" ${page>=pages?'disabled':''} onclick="changePage(1)" aria-label="Next page">›</button>`;
+}
+function changePage(d){const pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));page=Math.min(pages,Math.max(1,page+d));render();window.scrollTo({top:document.querySelector('#explorer').offsetTop-20,behavior:'smooth'});}
+['rankSearch','marksSearch'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')applyFilters();}));
+$('stateFilter').addEventListener('change',applyFilters);
+document.querySelectorAll('#explorer th[data-sort]').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.sort;if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1;}applyFilters();}));
+$('clearFilters').addEventListener('click',()=>{['rankSearch','marksSearch'].forEach(id=>$(id).value='');['branchFilter','categoryFilter','roundFilter','stateFilter'].forEach(id=>$(id).value='');sortKey=null;sortDir=1;applyFilters();});
+boot();
+</script>
+</body>
+</html>
